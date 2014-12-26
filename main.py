@@ -17,10 +17,7 @@ from sklearn.cluster import KMeans
 import os, sys, time, glob
 import h5py
 
-
-from sklearn.preprocessing import StandardScaler
-from sklearn.datasets import make_moons, make_circles, make_classification
-from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neighbors import KNeighborsClassifier, RadiusNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, BaggingClassifier, GradientBoostingClassifier
@@ -168,11 +165,11 @@ if __name__ == '__main__':
 	y2c = {}
 	cCntr = 0
 	cCnt = {}
-	sampleDir = 'img/'
-	for fn in os.listdir(sampleDir):
+	dsDir = 'img/'
+	for fn in os.listdir(dsDir):
 #		try:
 			if fn.endswith('jpg') or fn.endswith('png'):
-				X.append(denominant_color(sampleDir + fn).reshape(-1))
+				X.append(denominant_color(dsDir + fn).reshape(-1))
 				chars = fn.split('.')[0] # CHARACTER.X.jpg
 				if chars not in c2y:
 					y2c[cCntr] = chars
@@ -194,16 +191,16 @@ if __name__ == '__main__':
 		np.random.shuffle(r_c)
 		r_cs.append(r_c.copy())
 
-#	tuning = False
+	tuning = False
 	if tuning:
 
 		sMax = 0
 #		for p in np.linspace(-20.0, 20.0, 15):
-#		for p in np.linspace(0.01,2.0, 15):
-		for p in range(1, 55):
-			param = dict(n_neighbors = p, weights = 'distance', algorithm = 'ball_tree')
+		for p in np.linspace(375., 255.*24, 15):
+#		for p in range(1, 20):
+			param = dict(radius = p)
 
-			clf = KNeighborsClassifier(**param)
+			clf = RadiusNeighborsClassifier(**param)
 
 			s = 0
 			for r_c in r_cs:
@@ -229,7 +226,9 @@ if __name__ == '__main__':
 #		clf = GaussianNB() # fair
 #		clf = MultinomialNB() # good
 #		clf = BernoulliNB() # suck
-		clf = KNeighborsClassifier()
+#		clf = KNeighborsClassifier(n_neighbors = 5, weights = 'distance') # fair
+#		clf = RadiusNeighborsClassifier() # suck
+		clf = QDA()
 
 
 
