@@ -50,13 +50,14 @@ def better_imshow(title, img, reuse = True):
 #	if title is None: title = "%sx%s" % img.shape[:2]
 	if np.any(np.frombuffer(title.encode(), dtype = np.uint8)>=0x80):
 		global fig
-		from pylab import figure, subplot, imshow
+		from pylab import figure, subplot, imshow, show
 		if not reuse or fig is None:
 			fig = figure(figsize = (img.shape[1]/96, (img.shape[0]+30)/96))
 #		plt = fig.add_subplot(111, title = title)
 #		plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
 		subplot(111, title = title)
 		imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+		show()
 
 	else:
 		cv2.imshow(title, img)
