@@ -80,6 +80,9 @@ def denominant_color(filename, **kwargs):
 			if md5 in hdf:
 				cRGB = np.array(hdf[md5])
 				print('[Cache hit] ' + filename)
+				if not kwargsd.get('rtn_img'):
+					hdf.close()
+					return cRGB
 		elif 'w' in cache_mode:
 			hdf = h5py.File(cache, "w")
 
@@ -200,16 +203,16 @@ if __name__ == '__main__':
 		np.random.shuffle(r_c)
 		r_cs.append(r_c.copy())
 
-	tuning = False
+#	tuning = False
 	if tuning:
 
 		sMax = 0
 #		for p in np.linspace(-20.0, 20.0, 15):
-#		for p in np.linspace(1e-4, 0.20, 15):
-		for p in range(2, 20):
-			param = dict()
+#		for p in np.linspace(1e-4, 2.0, 15):
+		for p in range(4,6):
+			param = dict(kernel = 'poly', degree = p, gamma = 1.8)
 
-			clf = KNeighborsClassifier(**param)
+			clf = SVC(**param)
 
 			s = 0
 			for r_c in r_cs:
@@ -218,16 +221,17 @@ if __name__ == '__main__':
 				clf.fit(X_c[:sCnt], y_c[:sCnt])
 				s += clf.score(X_c[sCnt:],y_c[sCnt:])
 
+			s /= len(r_cs)
 			print("[Classifier] Cross_valid score = {:2},\t param = {}".format(s, param))
 
 			if s>sMax: clfBest, sMax = clf, s
 
-		clf = clfBest
-		print("[Classifier] ", clf.get_params())
+		print("[Classifier] ", clfBest.get_params())
+		classifiers = [clfBest]
 
 	else:
 		classifiers = [
-			SVC(kernel = 'poly', C = 1., degree = 5, gamma = 0.8, tol = 1.0), # fair
+			SVC(kernel = 'poly', degree = 4, gamma = 1.8), # fair
 #			NuSVC(kernel = 'linear', nu = p, degree = 5), #suck
 			MultinomialNB(), # fair
 			GaussianNB(), # fair
@@ -235,7 +239,7 @@ if __name__ == '__main__':
 			LDA(), # good
 #			QDA(), # bug
 			AdaBoostClassifier(), # bad
-			GradientBoostingClassifier(), # fair+ slow
+			GradientBoostingClassifier(n_estimators = 31), # fair+ slow
 			BaggingClassifier(n_estimators = 45), # fair+
 			DecisionTreeClassifier(), # bad
 #			ExtraTreeClassifier(), # bad
@@ -243,50 +247,51 @@ if __name__ == '__main__':
 #			RadiusNeighborsClassifier(), # suck eee
 			LabelPropagation(kernel = 'knn'), #suck
 #			LabelSpreading(kernel = 'knn'), #suck
-			KNeighborsClassifier(n_neighbors = 5, weights = 'distance') # fair
+			KNeighborsClassifier(n_neighbors = 25, weights = 'distance') # fair+
 			]
 #		comparison = False
 		if not comparison:
 			classifiers = classifiers[:1]
-		for clf in classifiers:
-			clfName = str(clf).split('(')[0]
-			s = 0
-			for r_c in r_cs:
-				X_c, y_c = X[r_c], y[r_c]
-				sCnt = int(0.9 * len(X))
-				clf.fit(X_c[:sCnt], y_c[:sCnt])
-				s += clf.score(X_c[sCnt:],y_c[sCnt:])
+	for clf in classifiers:
+		clfName = str(clf).split('(')[0]
+		s = 0
+		for r_c in r_cs:
+			X_c, y_c = X[r_c], y[r_c]
+			sCnt = int(0.9 * len(X))
+			clf.fit(X_c[:sCnt], y_c[:sCnt])
+			s += clf.score(X_c[sCnt:],y_c[sCnt:])
 
-			print("[Classifier] {} cross_valid score:{:3}".format(clfName, s/len(r_cs)))
+		s /= len(r_cs)
+		print("[Classifier] {} cross_valid score:{:3}".format(clfName, s))
 
-			clf.fit(X, y)
-			print("[Classifier] {} Training score:{}".format(clfName, clf.score(X,y)))
+		clf.fit(X, y)
+		print("[Classifier] {} Training score:{}".format(clfName, clf.score(X,y)))
 
-			if len(sys.argv) > 1:
-				if len(sys.argv) > 2:
-					files = sys.argv[1:]
-				else : # Expand wildcard
-					files = glob.glob(sys.argv[1])
+		if len(sys.argv) > 1:
+			if len(sys.argv) > 2:
+				files = sys.argv[1:]
+			else : # Expand wildcard
+				files = glob.glob(sys.argv[1])
 
-				for i, fn in enumerate(files):
-					X_test = denominant_color(fn, show_img = None)
-					y_test = y2c[clf.predict(X_test.reshape(-1))[0]]
-					print("[Classifier] May {} in {}.".format(y_test, fn))
+			for i, fn in enumerate(files):
+				X_test = denominant_color(fn, show_img = None)
+				y_test = y2c[clf.predict(X_test.reshape(-1))[0]]
+				print("[Classifier] May {} in {}.".format(y_test, fn))
 
-					if disp:
-						text = y_test + '/' + clfName
-						img = denominant_color(fn, rtn_img = True,
-							show_img = 'overlay')
-						canvas = Image.new('RGBA', img.size)
-						painter = ImageDraw.Draw(canvas)
-						if os.path.isfile(FONT):
-							font = ImageFont.truetype(FONT, 36)
-						else:
-							font = ImageFont.load_default(36)
-						painter.text((CIR_MARGIN +2, CIR_RADIUS * 2 + CIR_MARGIN * 3 +2),
-							text, font=font,
-							fill = RGBA_SHADOW)
-						painter.text((CIR_MARGIN, CIR_RADIUS * 2 + CIR_MARGIN * 3),
-							text, font=font,
-							fill = tuple([int(c) for c in X_test[int(len(X_test)*2/3)]]))
-						Image.alpha_composite(img, canvas).show(title = fn)
+				if disp:
+					text = y_test + '/' + clfName
+					img = denominant_color(fn, rtn_img = True,
+						show_img = 'overlay')
+					canvas = Image.new('RGBA', img.size)
+					painter = ImageDraw.Draw(canvas)
+					if os.path.isfile(FONT):
+						font = ImageFont.truetype(FONT, 36)
+					else:
+						font = ImageFont.load_default(36)
+					painter.text((CIR_MARGIN +2, CIR_RADIUS * 2 + CIR_MARGIN * 3 +2),
+						text, font=font,
+						fill = RGBA_SHADOW)
+					painter.text((CIR_MARGIN, CIR_RADIUS * 2 + CIR_MARGIN * 3),
+						text, font=font,
+						fill = tuple([int(c) for c in X_test[int(len(X_test)*2/3)]]))
+					Image.alpha_composite(img, canvas).show(title = fn)
