@@ -46,6 +46,9 @@ comparison = True
 #imported_pylab = False
 fig = None
 
+FOCUS_MODE = 'raw'
+FOCUS_MODE = 'weight+'
+
 def better_imshow(title, img, reuse = True):
 #	if title is None: title = "%sx%s" % img.shape[:2]
 	if np.any(np.frombuffer(title.encode(), dtype = np.uint8)>=0x80):
@@ -111,10 +114,13 @@ def focus(img, **kwargs):
 	if kwargd.get('rtn_img'):
 		return (img * mask[:,:,np.newaxis]).astype(np.uint8)
 	else:
+		if kwargd.get('weight_mul'):
+			mask *= img.shape[0] * img.shape[1] / np.sum(mask)
+			mask += 0.5
+			return np.repeat(img.reshape(-1,3), mask.flatten().astype(np.uint8), axis=0)
 		if kwargd.get('rtn_weight'):
 			return mask
-		else:
-			return img[np.where(mask)]
+		return img[np.where(mask)]
 
 def color_quantization(img, **kwargs):
 	'''
@@ -152,8 +158,16 @@ def color_extractor(fn, mode):
 	img = cv2.imread(fn)
 	thumb = thumbnail(img, SIZE_THUMB, cv2.INTER_LINEAR)
 
-	body = focus(thumb)
-	colors = color_quantization(body)
+	if FOCUS_MODE == 'remove':
+		thumb = focus(thumb)
+
+	if FOCUS_MODE == 'weight-':
+		thumb = focus(thumb, rtn_img = True, rtn_weight = True)
+
+	if FOCUS_MODE == 'weight+':
+		thumb = focus(thumb, rtn_weight = True, weight_mul = True)
+
+	colors = color_quantization(thumb)
 
 	preview = None
 	if mode == 'palette':
@@ -256,7 +270,9 @@ def md5(filename):
 	return os.popen("md5sum '"+filename+"'").read().split()[0]
 
 if __name__ == '__main__':
-	dataset = cache('/classifier/dataset/img', lambda :prepare_dataset(), 'w', is_obj=True)
+	print('[Image feature] Mode:'+FOCUS_MODE)
+#	dataset = cache('/classifier/dataset/img', lambda :prepare_dataset(), 'w', is_obj=True)
+	dataset = prepare_dataset()
 	print("[Classifier] Dataset y={}, count = {}".format(dataset.c2y, dataset.cnt))
 	dataset.genIndices()
 
@@ -328,10 +344,17 @@ if __name__ == '__main__':
 				img = cv2.imread(fn)
 				thumb = thumbnail(img, SIZE_THUMB, cv2.INTER_LINEAR)
 
-#				body = focus(thumb)
-				body = focus(thumb, rtn_img = True, rtn_weight = True)
-				colors = color_quantization(body)
-#				colors = color_quantization(thumb)
+				if FOCUS_MODE == 'remove':
+					thumb = focus(thumb)
+
+				if FOCUS_MODE == 'weight-':
+					thumb = focus(thumb, rtn_img = True, rtn_weight = True)
+
+				if FOCUS_MODE == 'weight+':
+					thumb = focus(thumb, rtn_weight = True, weight_mul = True)
+
+				colors = color_quantization(thumb)
+
 				y_test = clf.predict(colors.reshape(-1))[0]
 				char = dataset.y2c[y_test]
 				print("[Classifier] May {} in {}.".format(char, fn))
@@ -340,5 +363,6 @@ if __name__ == '__main__':
 				preview = focus(preview, rtn_img = True, rtn_weight = True)
 				draw_palette(preview, colors)
 #				better_imshow(clfName+':'+char, preview)
-				better_imshow(clfName+':'+char, preview, reuse = False)
-				imageDisplayed()
+#				better_imshow(clfName+':'+char, preview, reuse = False)
+#				imageDisplayed()
+				cv2.imwrite(fn.split('/')[-1]+'-'+clfName+'-'+char+'-'+FOCUS_MODE+'.jpg', preview)
