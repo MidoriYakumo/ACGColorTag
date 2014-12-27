@@ -57,7 +57,7 @@ def better_imshow(title, img, reuse = True):
 #		plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
 		subplot(111, title = title)
 		imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-		show()
+		show(block=False)
 
 	else:
 		cv2.imshow(title, img)
@@ -87,6 +87,7 @@ def focus(img, **kwargs):
 #	F_SHAPE = (9, 9)
 	F_SHAPE = (img.shape[0]//3, img.shape[1]//3)
 	TOP_RATIO = 0.7
+#	TOP_RATIO = 0.6
 
 	sobelx = cv2.Sobel(img, cv2.CV_16S, 1, 0, ksize=5).astype(np.int32)
 	sobely = cv2.Sobel(img, cv2.CV_16S, 0, 1, ksize=5).astype(np.int32)
@@ -99,6 +100,7 @@ def focus(img, **kwargs):
 			mask = weight_func(sobel)
 		else:
 			mask = sobel/sobel.max()
+#			mask = (sobel/sobel.max())**2
 	else:
 		sobel_1d = sobel.flatten()
 		mask = sobel>np.sort(sobel_1d)[TOP_RATIO*len(sobel_1d)]
@@ -170,7 +172,7 @@ def color_extractor(fn, mode):
 def char_extractor(fn):
 	return [fn.split('.')[0]] # CHARACTER.X.jpg
 
-def cache(key, miss_func = None, mode='r', fn = 'cache'+str(K)+'.hdf5', is_obj = False):
+def cache(key, miss_func = None, mode='r', fn = 'cache-'+str(K)+'.hdf5', is_obj = False):
 	if not os.path.isfile(fn):
 		hdf = h5py.File(fn, "w")
 		hdf.close()
@@ -280,9 +282,9 @@ if __name__ == '__main__':
 		classifiers = [clfBest]
 	else:
 		classifiers = [
+			SVC(kernel = 'poly', degree = 4, gamma = 1.8), # fair
 			KNeighborsClassifier(n_neighbors = 25, weights = 'distance'), # fair+
 			LDA(), # good
-			SVC(kernel = 'poly', degree = 4, gamma = 1.8), # fair
 #			NuSVC(kernel = 'linear', nu = p, degree = 5), #suck
 			MultinomialNB(), # fair
 			GaussianNB(), # fair
@@ -326,14 +328,16 @@ if __name__ == '__main__':
 				img = cv2.imread(fn)
 				thumb = thumbnail(img, SIZE_THUMB, cv2.INTER_LINEAR)
 
-				body = focus(thumb)
+#				body = focus(thumb)
+				body = focus(thumb, rtn_img = True, rtn_weight = True)
 				colors = color_quantization(body)
+#				colors = color_quantization(thumb)
 				y_test = clf.predict(colors.reshape(-1))[0]
 				char = dataset.y2c[y_test]
 				print("[Classifier] May {} in {}.".format(char, fn))
 
 				preview = thumbnail(img, SIZE_PREVIEW)
-				preview = focus(preview, rtn_img = True)
+				preview = focus(preview, rtn_img = True, rtn_weight = True)
 				draw_palette(preview, colors)
 #				better_imshow(clfName+':'+char, preview)
 				better_imshow(clfName+':'+char, preview, reuse = False)
