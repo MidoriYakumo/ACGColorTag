@@ -46,9 +46,9 @@ comparison = True
 #imported_pylab = False
 fig = None
 
-FOCUS_MODE = 'raw'
+#FOCUS_MODE = 'raw'
 #FOCUS_MODE = 'weight-'
-#FOCUS_MODE = 'weight+'
+FOCUS_MODE = 'weight+'
 
 #os.popen('rm cache.hdf5')
 
@@ -208,6 +208,7 @@ def cache(key, miss_func = None, mode='r', fn = 'cache.hdf5', is_obj = False):
 		if type(ret) is not np.ndarray:
 			print('[Cache] ret of miss_func('+key+')is not an array')
 		if 'w' in mode:
+#			hdf.create_group()
 			if is_obj:
 				data = np.frombuffer(pickle.dumps(ret), dtype = np.uint8)
 			else:
@@ -261,7 +262,7 @@ def prepare_dataset(dsDir = 'dataset'):
 #		try:
 			if fn.endswith('jpg') or fn.endswith('png'):
 				print('[Info] {:4}/{:4}:{}'.format(i, total, fn))
-				colors = cache('raw/'+HDF_REL_PATH+md5(dsDir+fn),
+				colors = cache('/data'+HDF_REL_PATH+md5(dsDir+fn),
 					lambda :color_extractor(dsDir + fn, 'palette').reshape(-1),
 					'w')
 				dataset.append(colors, char_extractor(fn))
