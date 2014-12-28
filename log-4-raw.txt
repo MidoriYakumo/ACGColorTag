@@ -1,0 +1,24 @@
+[Image feature] Mode:raw
+[Classifier] Dataset y={'八雲紫': 1, 'lumia': 7, '八雲藍': 3, '早苗': 5, '萃香': 11, '春日野穹': 14, '幽々子': 2, 'ミク': 9, 'Flandre': 4, '橙': 12, '霊夢': 0, '妖夢': 6, '藤原妹紅': 13, 'チルノ': 10, '天子': 8}, count = {'八雲紫': 32, 'lumia': 1, '八雲藍': 13, '早苗': 6, '萃香': 4, '春日野穹': 1, '幽々子': 36, 'ミク': 2, 'Flandre': 2, '橙': 1, '霊夢': 46, '妖夢': 3, '藤原妹紅': 1, 'チルノ': 3, '天子': 4}
+[Classifier] SVC cross_valid score:0.4708333333333333
+[Classifier] SVC Training score:1.0
+[Classifier] KNeighborsClassifier cross_valid score:0.45208333333333334
+[Classifier] KNeighborsClassifier Training score:1.0
+[Classifier] MultinomialNB cross_valid score:0.36666666666666664
+[Classifier] MultinomialNB Training score:0.535483870967742
+[Classifier] GaussianNB cross_valid score:0.3729166666666667
+[Classifier] GaussianNB Training score:0.6258064516129033
+[Classifier] AdaBoostClassifier cross_valid score:0.30625
+[Classifier] AdaBoostClassifier Training score:0.32903225806451614
+[Classifier] BaggingClassifier cross_valid score:0.45
+[Classifier] BaggingClassifier Training score:1.0
+[Classifier] DecisionTreeClassifier cross_valid score:0.3729166666666667
+[Classifier] DecisionTreeClassifier Training score:1.0
+[Classifier] RandomForestClassifier cross_valid score:0.42083333333333334
+[Classifier] RandomForestClassifier Training score:0.9806451612903225
+[Classifier] LabelPropagation cross_valid score:0.275
+[Classifier] LabelPropagation Training score:0.3419354838709677
+[Classifier] GradientBoostingClassifier cross_valid score:0.42916666666666664
+[Classifier] GradientBoostingClassifier Training score:1.0
+[Classifier] LDA cross_valid score:0.4583333333333333
+[Classifier] LDA Training score:0.6709677419354839

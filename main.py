@@ -1,3 +1,4 @@
+#1 /usr/bin/python3
 # -*- coding: utf-8 -*-
 """
 Created on Sat Dec 27 13:46:34 2014
@@ -28,7 +29,7 @@ __version__ = '0.0.1'
 SIZE_THUMB = 256
 SIZE_PREVIEW = 512
 
-K = 8
+K = 5
 ATTEMPTS = 10
 MAX_ITER = 10
 EPSILON = 1.0
@@ -43,16 +44,29 @@ CIR_BORDER_DARK = (88, 88, 88)
 tuning = True
 comparison = True
 
-#imported_pylab = False
-fig = None
-
-#FOCUS_MODE = 'raw'
+FOCUS_MODE = 'raw'
 #FOCUS_MODE = 'weight-'
-FOCUS_MODE = 'weight+'
+#FOCUS_MODE = 'weight+'
+
+HDF_REL_PATH = "/%(K)s/%(FOCUS_MODE)s/" % locals()
 
 #os.popen('rm cache.hdf5')
 
-HDF_REL_PATH = "/%(K)s/%(FOCUS_MODE)s/" % locals()
+#imported_pylab = False
+fig = None
+
+#current_time = time.time()
+logFile = open('log-%(K)s-%(FOCUS_MODE)s.txt' % locals(), 'a')
+
+def dprint(*args, **kwargs):
+	kwargd = dict(sep = ' ', end='\n')
+	kwargd.update(kwargs)
+	sep = kwargd['sep']
+	end = kwargd['end']
+	s = sep.join(args)
+	logFile.write(s+end)
+	print(s, **kwargs)
+	logFile.flush()
 
 def better_imshow(title, img, reuse = True, block = False):
 #	if title is None: title = "%sx%s" % img.shape[:2]
@@ -206,7 +220,7 @@ def cache(key, miss_func = None, mode='r', fn = 'cache.hdf5', is_obj = False):
 	else:
 		ret = miss_func()
 		if type(ret) is not np.ndarray:
-			print('[Cache] ret of miss_func('+key+')is not an array')
+			dprint('[Cache] ret of miss_func('+key+')is not an array')
 		if 'w' in mode:
 #			hdf.create_group()
 			if is_obj:
@@ -227,7 +241,7 @@ class illust_ds():
 
 	def append(self, features, characters):
 		if len(characters) > 1:
-			print("[Dataset] Only 1 character supported now.")
+			dprint("[Dataset] Only 1 character supported now.")
 			return 1
 		self.X.append(features)
 		char = characters[0]
@@ -253,10 +267,10 @@ class illust_ds():
 			self.indices.append(indice.copy())
 
 def prepare_dataset(dsDir = 'dataset'):
-	dsDir += '/'
+	dsDir += os.sep
 	fileList = list(os.listdir(dsDir))
 	total = len(fileList)
-	print("[Info] Extracting features from {} files.".format(total))
+	dprint("[Info] Extracting features from {} files.".format(total))
 	dataset = illust_ds()
 	for i, fn in enumerate(fileList):
 #		try:
@@ -276,10 +290,10 @@ def md5(filename):
 	return os.popen("md5sum '"+filename+"'").read().split()[0]
 
 if __name__ == '__main__':
-	print('[Image feature] Mode:'+FOCUS_MODE)
+	dprint('[Image feature] Mode:'+FOCUS_MODE)
 	dataset = cache('/classifier/dataset'+HDF_REL_PATH+'image', lambda :prepare_dataset(), 'w', is_obj=True)
 #	dataset = prepare_dataset()
-	print("[Classifier] Dataset y={}, count = {}".format(dataset.c2y, dataset.cnt))
+	dprint("[Classifier] Dataset y={}, count = {}".format(dataset.c2y, dataset.cnt))
 	dataset.genIndices()
 
 	tuning = False
@@ -298,20 +312,18 @@ if __name__ == '__main__':
 				clf.fit(X_c[:sCnt], y_c[:sCnt])
 				s += clf.score(X_c[sCnt:],y_c[sCnt:])
 			s /= len(dataset.indices)
-			print("[Classifier] Cross_valid score = {:2},\t param = {}".format(s, param))
+			dprint("[Classifier] Cross_valid score = {:2},\t param = {}".format(s, param))
 			if s>sMax: clfBest, sMax = clf, s
-		print("[Classifier] ", clfBest.get_params())
+		dprint("[Classifier] ", clfBest.get_params())
 		classifiers = [clfBest]
 	else:
 		classifiers = [
-			SVC(kernel = 'poly', degree = 4, gamma = 1.8), # fair
+			SVC(kernel = 'poly', degree = 4, gamma = 1.8, C = 0.1), # fair
 			KNeighborsClassifier(n_neighbors = 25, weights = 'distance'), # fair+
-			LDA(), # good
 #			NuSVC(kernel = 'linear', nu = p, degree = 5), #suck
 			MultinomialNB(), # fair
 			GaussianNB(), # fair
 #			BernoulliNB(), # suck
-#			QDA(), # bug
 			AdaBoostClassifier(), # bad
 			BaggingClassifier(n_estimators = 45), # fair+
 			DecisionTreeClassifier(), # bad
@@ -320,7 +332,9 @@ if __name__ == '__main__':
 #			RadiusNeighborsClassifier(), # suck eee
 			LabelPropagation(kernel = 'knn'), #suck
 #			LabelSpreading(kernel = 'knn'), #suck
-			GradientBoostingClassifier(n_estimators = 31) # fair+ slow
+			GradientBoostingClassifier(n_estimators = 31), # fair+ slow
+			LDA(), # good
+			QDA() # sad
 			]
 #		comparison = False
 		if not comparison:
@@ -335,10 +349,10 @@ if __name__ == '__main__':
 			s += clf.score(X_c[sCnt:],y_c[sCnt:])
 
 		s /= len(dataset.indices)
-		print("[Classifier] {} cross_valid score:{:3}".format(clfName, s))
+		dprint("[Classifier] {} cross_valid score:{:3}".format(clfName, s))
 
 		clf.fit(dataset.X, dataset.y)
-		print("[Classifier] {} Training score:{}".format(clfName, clf.score(dataset.X, dataset.y)))
+		dprint("[Classifier] {} Training score:{}".format(clfName, clf.score(dataset.X, dataset.y)))
 
 		if len(sys.argv) > 1:
 			if len(sys.argv) > 2:
@@ -371,5 +385,7 @@ if __name__ == '__main__':
 #				better_imshow(clfName+':'+char, preview)
 #				better_imshow(clfName+':'+char, preview, reuse = False)
 #				imageDisplayed()
-				cv2.imwrite('result/'+fn.split('/')[-1]+'-'+
-					clfName+'-'+char+'-'+FOCUS_MODE+'.jpg', preview)
+				cv2.imwrite('result'+os.sep+fn.split(os.sep)[-1][:15]+'-'+
+					clfName+'.'+str(K)+'.'+FOCUS_MODE+'='+char+'.jpg', preview)
+
+logFile.close()
