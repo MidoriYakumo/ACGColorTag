@@ -47,7 +47,12 @@ comparison = True
 fig = None
 
 FOCUS_MODE = 'raw'
-FOCUS_MODE = 'weight+'
+#FOCUS_MODE = 'weight-'
+#FOCUS_MODE = 'weight+'
+
+#os.popen('rm cache.hdf5')
+
+HDF_REL_PATH = "/%(K)s/%(FOCUS_MODE)s/" % locals()
 
 def better_imshow(title, img, reuse = True, block = False):
 #	if title is None: title = "%sx%s" % img.shape[:2]
@@ -186,7 +191,7 @@ def color_extractor(fn, mode):
 def char_extractor(fn):
 	return [fn.split('.')[0]] # CHARACTER.X.jpg
 
-def cache(key, miss_func = None, mode='r', fn = 'cache-'+str(K)+'.hdf5', is_obj = False):
+def cache(key, miss_func = None, mode='r', fn = 'cache.hdf5', is_obj = False):
 	if not os.path.isfile(fn):
 		hdf = h5py.File(fn, "w")
 		hdf.close()
@@ -256,7 +261,7 @@ def prepare_dataset(dsDir = 'dataset'):
 #		try:
 			if fn.endswith('jpg') or fn.endswith('png'):
 				print('[Info] {:4}/{:4}:{}'.format(i, total, fn))
-				colors = cache('raw/'+md5(dsDir+fn),
+				colors = cache('raw/'+HDF_REL_PATH+md5(dsDir+fn),
 					lambda :color_extractor(dsDir + fn, 'palette').reshape(-1),
 					'w')
 				dataset.append(colors, char_extractor(fn))
@@ -271,8 +276,8 @@ def md5(filename):
 
 if __name__ == '__main__':
 	print('[Image feature] Mode:'+FOCUS_MODE)
-#	dataset = cache('/classifier/dataset/img', lambda :prepare_dataset(), 'w', is_obj=True)
-	dataset = prepare_dataset()
+	dataset = cache('/classifier/dataset'+HDF_REL_PATH+'image', lambda :prepare_dataset(), 'w', is_obj=True)
+#	dataset = prepare_dataset()
 	print("[Classifier] Dataset y={}, count = {}".format(dataset.c2y, dataset.cnt))
 	dataset.genIndices()
 
@@ -316,7 +321,7 @@ if __name__ == '__main__':
 #			LabelSpreading(kernel = 'knn'), #suck
 			GradientBoostingClassifier(n_estimators = 31) # fair+ slow
 			]
-		comparison = False
+#		comparison = False
 		if not comparison:
 			classifiers = classifiers[:1]
 	for clf in classifiers:
@@ -357,7 +362,7 @@ if __name__ == '__main__':
 
 				y_test = clf.predict(colors.reshape(-1))[0]
 				char = dataset.y2c[y_test]
-				print("[Classifier] May {} in {}.".format(char, fn))
+				print("[Classifier] {}: May {} in {}.".format(clfName, char, fn))
 
 				preview = thumbnail(img, SIZE_PREVIEW)
 				preview = focus(preview, rtn_img = True, rtn_weight = True)
