@@ -49,7 +49,7 @@ fig = None
 FOCUS_MODE = 'raw'
 FOCUS_MODE = 'weight+'
 
-def better_imshow(title, img, reuse = True):
+def better_imshow(title, img, reuse = True, block = False):
 #	if title is None: title = "%sx%s" % img.shape[:2]
 	if np.any(np.frombuffer(title.encode(), dtype = np.uint8)>=0x80):
 		global fig
@@ -60,7 +60,7 @@ def better_imshow(title, img, reuse = True):
 #		plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
 		subplot(111, title = title)
 		imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-		show(block=False)
+		show(block=block)
 
 	else:
 		cv2.imshow(title, img)
@@ -246,7 +246,7 @@ class illust_ds():
 			np.random.shuffle(indice)
 			self.indices.append(indice.copy())
 
-def prepare_dataset(dsDir = 'img'):
+def prepare_dataset(dsDir = 'dataset'):
 	dsDir += '/'
 	fileList = list(os.listdir(dsDir))
 	total = len(fileList)
@@ -365,4 +365,5 @@ if __name__ == '__main__':
 #				better_imshow(clfName+':'+char, preview)
 #				better_imshow(clfName+':'+char, preview, reuse = False)
 #				imageDisplayed()
-				cv2.imwrite(fn.split('/')[-1]+'-'+clfName+'-'+char+'-'+FOCUS_MODE+'.jpg', preview)
+				cv2.imwrite('result/'+fn.split('/')[-1]+'-'+
+					clfName+'-'+char+'-'+FOCUS_MODE+'.jpg', preview)

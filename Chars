@@ -1,9 +1,9 @@
-#Escape # [ ] ( ) ・
+#Escape # [ ] ( ) ・ . _ -
 Alice	alice_margatroid	アリス	愛麗絲
 Flandre	flandre_scarlet	フランドール
 霊夢	hakurei_reimu	reimu	博麗霊夢	霊梦	霊夢	灵梦	腋巫女
 魔理沙	kirisame_marisa	魔理沙	霧雨魔理沙
-Sanae	kochiya_sanae
+Sanae	kochiya_sanae	sanae
 Koishi	komeiji_koishi	古明地こいし
 Remilia	remilia_scarlet	レミリア
 ニャンコ	ニャンコ先生
@@ -23,13 +23,13 @@ Remilia	remilia_scarlet	レミリア
 チルノ	チルノ	Cirno
 八雲紫	紫	八雲紫	yakumo_yukari
 蓮子	宇佐見蓮子	蓮子
-妖夢	妖夢	魂魄妖夢
+妖夢	妖夢	魂魄妖夢	youmu
 射命丸文	射命丸文	あや	Aya
 蓬莱山輝夜	蓬莱山輝夜	輝夜
 霍青娥	霍青娥
-幽々子	幽々子	西行寺幽々子
+幽々子	幽々子	西行寺幽々子 yuyuko
 早苗	東風谷早苗	早苗
-天子	天子	比那名居天子
+天子	天子	比那名居天子	tenko
 藤原妹紅	妹紅	妹红	藤原妹红	藤原妹紅
 鍵山雛	鍵山雛
 咲夜	咲夜	十六夜咲夜
@@ -38,7 +38,7 @@ Remilia	remilia_scarlet	レミリア
 紅美鈴	紅美鈴
 小町	小野塚小町	小町
 今泉影狼	今泉影狼	影狼
-萃香	萃香	伊吹萃香
+萃香	萃香	伊吹萃香	suika
 小傘	多々良小傘	小傘
 ぬえ	ぬえ	封獣ぬえ
 稗田阿求	稗田阿求	Akyuu
@@ -51,7 +51,7 @@ Mery	マエリベリー
 河城にとり	河城にとり
 秋穣子	秋穣子
 秋静葉	秋静葉
-橙	橙
+橙	橙	chen
 洛天依	洛天依
 乐正绫	乐正绫
 春日野穹	春日野穹	そら	kasugano_sora
@@ -65,3 +65,4 @@ Mery	マエリベリー
 永江衣玖	永江衣玖	衣玖
 加賀	加賀
 赤城	赤城
+lumia	lumia	ルーミア
