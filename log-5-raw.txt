@@ -431,3 +431,41 @@
 [Classifier] LDA Training score:0.564935064935065
 [Classifier] QDA cross_valid score:0.720400432900433
 [Classifier] QDA Training score:0.7272727272727273
+[Image feature] Mode:raw
+[Info] Extracting features from 155 files.
+[Cache] ret of miss_func(/classifier/dataset/5/raw/image)is not an array
+[Classifier] Dataset y={'八雲紫': 0, '春日野穹': 14, '妖夢': 6, '藤原妹紅': 13, 'ミク': 9, '橙': 12, 'チルノ': 10, '幽々子': 1, 'Flandre': 4, '八雲藍': 3, '霊夢': 2, 'lumia': 7, '天子': 8, '早苗': 5, '萃香': 11}, count = {'八雲紫': 32, '春日野穹': 1, '妖夢': 3, '藤原妹紅': 1, 'ミク': 2, '橙': 1, 'チルノ': 3, '幽々子': 36, 'Flandre': 2, '八雲藍': 13, '霊夢': 45, 'lumia': 1, '天子': 4, '早苗': 6, '萃香': 4}
+[Classifier] SVC cross_valid score:0.49375
+[Classifier] SVC Training score:1.0
+[Image feature] Mode:raw
+[Classifier] Dataset y={'藤原妹紅': 13, 'Flandre': 4, '幽々子': 1, '霊夢': 2, '早苗': 5, 'チルノ': 10, '橙': 12, '天子': 8, '妖夢': 6, '八雲藍': 3, 'lumia': 7, '春日野穹': 14, '萃香': 11, '八雲紫': 0, 'ミク': 9}, count = {'藤原妹紅': 1, 'Flandre': 2, '幽々子': 36, '霊夢': 45, '早苗': 6, 'チルノ': 3, '橙': 1, '天子': 4, '妖夢': 3, '八雲藍': 13, 'lumia': 1, '春日野穹': 1, '萃香': 4, '八雲紫': 32, 'ミク': 2}
+[Classifier] SVC cross_valid score:0.475
+[Classifier] SVC Training score:1.0
+[Image feature] Mode:raw
+[Classifier] Dataset y={'早苗': 5, 'lumia': 7, '霊夢': 2, '天子': 8, '八雲藍': 3, '橙': 12, '八雲紫': 0, 'Flandre': 4, 'ミク': 9, '妖夢': 6, '萃香': 11, '藤原妹紅': 13, 'チルノ': 10, '幽々子': 1, '春日野穹': 14}, count = {'早苗': 6, 'lumia': 1, '霊夢': 45, '天子': 4, '八雲藍': 13, '橙': 1, '八雲紫': 32, 'Flandre': 2, 'ミク': 2, '妖夢': 3, '萃香': 4, '藤原妹紅': 1, 'チルノ': 3, '幽々子': 36, '春日野穹': 1}
+[Classifier] SVC cross_valid score:0.48125
+[Classifier] SVC Training score:1.0
+[Classifier] KNeighborsClassifier cross_valid score:0.48125
+[Classifier] KNeighborsClassifier Training score:1.0
+[Classifier] MultinomialNB cross_valid score:0.45416666666666666
+[Classifier] MultinomialNB Training score:0.525974025974026
+[Classifier] GaussianNB cross_valid score:0.46458333333333335
+[Classifier] GaussianNB Training score:0.6428571428571429
+[Classifier] AdaBoostClassifier cross_valid score:0.4041666666666667
+[Classifier] AdaBoostClassifier Training score:0.461038961038961
+[Image feature] Mode:raw
+[Classifier] Dataset y={'藤原妹紅': 13, '霊夢': 2, '八雲藍': 3, '妖夢': 6, '天子': 8, '八雲紫': 0, 'ミク': 9, '春日野穹': 14, '萃香': 11, '早苗': 5, 'lumia': 7, '幽々子': 1, '橙': 12, 'Flandre': 4, 'チルノ': 10}, count = {'藤原妹紅': 1, '霊夢': 45, '八雲藍': 13, '妖夢': 3, '天子': 4, '八雲紫': 32, 'ミク': 2, '春日野穹': 1, '萃香': 4, '早苗': 6, 'lumia': 1, '幽々子': 36, '橙': 1, 'Flandre': 2, 'チルノ': 3}
+[Classifier] SVC cross_valid score:0.4270833333333333
+[Classifier] SVC Training score:1.0
+[Image feature] Mode:raw
+[Classifier] Dataset y={'八雲紫': 0, '霊夢': 2, '天子': 8, '早苗': 5, '春日野穹': 14, '八雲藍': 3, 'チルノ': 10, 'Flandre': 4, '妖夢': 6, '橙': 12, 'lumia': 7, '藤原妹紅': 13, 'ミク': 9, '幽々子': 1, '萃香': 11}, count = {'八雲紫': 32, '霊夢': 45, '天子': 4, '早苗': 6, '春日野穹': 1, '八雲藍': 13, 'チルノ': 3, 'Flandre': 2, '妖夢': 3, '橙': 1, 'lumia': 1, '藤原妹紅': 1, 'ミク': 2, '幽々子': 36, '萃香': 4}
+[Classifier] SVC cross_valid score:0.46875
+[Classifier] SVC Training score:1.0
+[Image feature] Mode:raw
+[Classifier] Dataset y={'Flandre': 4, '萃香': 11, '春日野穹': 14, '幽々子': 1, '霊夢': 2, '橙': 12, '八雲藍': 3, 'lumia': 7, '八雲紫': 0, '早苗': 5, 'チルノ': 10, 'ミク': 9, '天子': 8, '藤原妹紅': 13, '妖夢': 6}, count = {'Flandre': 2, '萃香': 4, '春日野穹': 1, '幽々子': 36, '霊夢': 45, '橙': 1, '八雲藍': 13, 'lumia': 1, '八雲紫': 32, '早苗': 6, 'チルノ': 3, 'ミク': 2, '天子': 4, '藤原妹紅': 1, '妖夢': 3}
+[Classifier] SVC cross_valid score:0.50625
+[Classifier] SVC Training score:1.0
+[Classifier] KNeighborsClassifier cross_valid score:0.46458333333333335
+[Classifier] KNeighborsClassifier Training score:1.0
+[Classifier] MultinomialNB cross_valid score:0.4270833333333333
+[Classifier] MultinomialNB Training score:0.525974025974026

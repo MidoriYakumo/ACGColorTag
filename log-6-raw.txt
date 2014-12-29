@@ -22,3 +22,29 @@
 [Classifier] GradientBoostingClassifier Training score:1.0
 [Classifier] LDA cross_valid score:0.4583333333333333
 [Classifier] LDA Training score:0.7225806451612903
+[Image feature] Mode:raw
+[Info] Extracting features from 155 files.
+[Image feature] Mode:raw
+[Info] Extracting features from 155 files.
+[Cache] ret of miss_func(/classifier/dataset/6/raw/image)is not an array
+[Classifier] Dataset y={'lumia': 7, '妖夢': 6, 'チルノ': 10, '橙': 12, 'Flandre': 4, '藤原妹紅': 13, '幽々子': 1, 'ミク': 9, '天子': 8, '八雲紫': 0, '早苗': 5, '春日野穹': 14, '霊夢': 2, '八雲藍': 3, '萃香': 11}, count = {'lumia': 1, '妖夢': 3, 'チルノ': 3, '橙': 1, 'Flandre': 2, '藤原妹紅': 1, '幽々子': 36, 'ミク': 2, '天子': 4, '八雲紫': 32, '早苗': 6, '春日野穹': 1, '霊夢': 45, '八雲藍': 13, '萃香': 4}
+[Classifier] SVC cross_valid score:0.49583333333333335
+[Classifier] SVC Training score:1.0
+[Classifier] KNeighborsClassifier cross_valid score:0.45
+[Classifier] KNeighborsClassifier Training score:1.0
+[Classifier] MultinomialNB cross_valid score:0.4
+[Classifier] MultinomialNB Training score:0.525974025974026
+[Classifier] GaussianNB cross_valid score:0.45
+[Classifier] GaussianNB Training score:0.6428571428571429
+[Classifier] AdaBoostClassifier cross_valid score:0.3958333333333333
+[Classifier] AdaBoostClassifier Training score:0.461038961038961
+[Classifier] BaggingClassifier cross_valid score:0.5041666666666667
+[Classifier] BaggingClassifier Training score:1.0
+[Classifier] DecisionTreeClassifier cross_valid score:0.38333333333333336
+[Classifier] DecisionTreeClassifier Training score:1.0
+[Classifier] RandomForestClassifier cross_valid score:0.45416666666666666
+[Classifier] RandomForestClassifier Training score:0.9805194805194806
+[Classifier] GradientBoostingClassifier cross_valid score:0.45625
+[Classifier] GradientBoostingClassifier Training score:1.0
+[Classifier] LDA cross_valid score:0.4354166666666667
+[Classifier] LDA Training score:0.7077922077922078

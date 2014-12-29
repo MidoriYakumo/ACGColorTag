@@ -168,7 +168,7 @@ def hlHist(img):
 	light = np.sum(l>PALETTE_MAX_L) / size
 	return hist, dark, light
 
-def bgrOnLum(img):
+def cOnLum(img):
 	if len(img.shape) == 2:
 		if img.shape[0] & 1:
 			img = np.concatenate([img, np.array([[0,0,0]], dtype = np.uint8)])
@@ -225,7 +225,7 @@ if __name__ == '__main__':
 	img = cv2.imread(sys.argv[1])
 #	hist, dark, light = hlHist(img)
 #	show_hlHist(img, hist, dark, light, sys.argv[1], fig)
-	vol = bgrOnLum(img)
-#	hist, dark, light = bgrOnLum(img)
+	vol = cOnLum(img)
+#	hist, dark, light = cOnLum(img)
 #	show_hlHist(img, hist, dark, light, sys.argv[2], fig)
 #	make_palette()
