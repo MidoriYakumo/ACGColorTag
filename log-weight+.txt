@@ -1,0 +1,30 @@
+[Image feature] Mode:weight+
+[Classifier] Dataset y={'霊夢': 2, 'Flandre': 4, '八雲紫': 0, '春日野穹': 14, '早苗': 5, '萃香': 11, 'lumia': 7, 'チルノ': 10, 'ミク': 9, '橙': 12, '妖夢': 6, '天子': 8, '八雲藍': 3, '藤原妹紅': 13, '幽々子': 1}, count = {'霊夢': 45, 'Flandre': 2, '八雲紫': 32, '春日野穹': 1, '早苗': 6, '萃香': 4, 'lumia': 1, 'チルノ': 3, 'ミク': 2, '橙': 1, '妖夢': 3, '天子': 4, '八雲藍': 13, '藤原妹紅': 1, '幽々子': 36}
+[Classifier] SVC cross_valid score:0.275
+[Classifier] SVC Training score:0.2922077922077922
+[Classifier] KNeighborsClassifier cross_valid score:0.42916666666666664
+[Classifier] KNeighborsClassifier Training score:1.0
+[Classifier] MultinomialNB cross_valid score:0.2875
+[Classifier] MultinomialNB Training score:0.35064935064935066
+[Classifier] GaussianNB cross_valid score:0.4395833333333333
+[Classifier] GaussianNB Training score:0.7727272727272727
+[Classifier] AdaBoostClassifier cross_valid score:0.44375
+[Classifier] AdaBoostClassifier Training score:0.461038961038961
+[Classifier] BaggingClassifier cross_valid score:0.5666666666666667
+[Classifier] BaggingClassifier Training score:1.0
+[Classifier] DecisionTreeClassifier cross_valid score:0.46458333333333335
+[Classifier] DecisionTreeClassifier Training score:1.0
+[Classifier] RandomForestClassifier cross_valid score:0.525
+[Classifier] RandomForestClassifier Training score:1.0
+[Classifier] LabelPropagation cross_valid score:0.24375
+[Classifier] LabelPropagation Training score:0.23376623376623376
+[Classifier] GradientBoostingClassifier cross_valid score:0.5291666666666667
+[Classifier] GradientBoostingClassifier Training score:1.0
+[Classifier] LDA cross_valid score:0.33958333333333335
+[Classifier] LDA Training score:0.987012987012987
+[Image feature] Mode:weight+
+[Classifier] Dataset y={'妖夢': 6, '霊夢': 2, '藤原妹紅': 13, 'lumia': 7, '橙': 12, 'Flandre': 4, '萃香': 11, '春日野穹': 14, '八雲藍': 3, '天子': 8, '幽々子': 1, '早苗': 5, '八雲紫': 0, 'チルノ': 10, 'ミク': 9}, count = {'妖夢': 3, '霊夢': 45, '藤原妹紅': 1, 'lumia': 1, '橙': 1, 'Flandre': 2, '萃香': 4, '春日野穹': 1, '八雲藍': 13, '天子': 4, '幽々子': 36, '早苗': 6, '八雲紫': 32, 'チルノ': 3, 'ミク': 2}
+[Classifier] SVC cross_valid score:0.23541666666666666
+[Classifier] SVC Training score:0.2922077922077922
+[Classifier] KNeighborsClassifier cross_valid score:0.41041666666666665
+[Classifier] KNeighborsClassifier Training score:1.0
