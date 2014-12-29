@@ -21,7 +21,7 @@ from sklearn.lda import LDA
 from sklearn.qda import QDA
 from sklearn.semi_supervised import LabelPropagation, LabelSpreading
 
-
+from hlshist import *
 
 
 __version__ = '0.0.1'
@@ -44,16 +44,19 @@ CIR_BORDER_DARK = (88, 88, 88)
 tuning = True
 comparison = True
 
-FOCUS_MODE = 'raw'
+#FOCUS_MODE = 'raw'
 #FOCUS_MODE = 'weight-'
-#FOCUS_MODE = 'weight+'
+FOCUS_MODE = 'weight+'
 
 HDF_REL_PATH = "/%(K)s/%(FOCUS_MODE)s/" % locals()
 
 #os.popen('rm cache.hdf5')
 
 #imported_pylab = False
-fig = None
+#fig = None
+
+import pylab as pl
+fig = pl.figure()
 
 #current_time = time.time()
 logFile = open('log-%(K)s-%(FOCUS_MODE)s.txt' % locals(), 'a')
@@ -186,7 +189,10 @@ def color_extractor(fn, mode):
 	if FOCUS_MODE == 'weight+':
 		thumb = focus(thumb, rtn_weight = True, weight_mul = True)
 
-	colors = color_quantization(thumb)
+#	colors = color_quantization(thumb)
+	hist, dark, light = hlVector(thumb)
+	colors = np.concatenate([[dark, light], hist.flatten()])
+#	show_hlFeature(thumb, hist, dark, light, fn, fig, 1)
 
 	preview = None
 	if mode == 'palette':
@@ -277,8 +283,8 @@ def prepare_dataset(dsDir = 'dataset'):
 			if fn.endswith('jpg') or fn.endswith('png'):
 				print('[Info] {:4}/{:4}:{}'.format(i, total, fn))
 				colors = cache('/data'+HDF_REL_PATH+md5(dsDir+fn),
-					lambda :color_extractor(dsDir + fn, 'palette').reshape(-1),
-					'w')
+					lambda :color_extractor(dsDir + fn, None).reshape(-1),
+					'w', fn = 'cach-hl.hdf5')
 				dataset.append(colors, char_extractor(fn))
 #		except Exception as e:
 #			print(fn, e)
@@ -291,7 +297,7 @@ def md5(filename):
 
 if __name__ == '__main__':
 	dprint('[Image feature] Mode:'+FOCUS_MODE)
-	dataset = cache('/classifier/dataset'+HDF_REL_PATH+'image', lambda :prepare_dataset(), 'w', is_obj=True)
+	dataset = cache('/classifier/dataset'+HDF_REL_PATH+'image', lambda :prepare_dataset(), 'w', fn = 'cach-hl.hdf5', is_obj=True)
 #	dataset = prepare_dataset()
 	dprint("[Classifier] Dataset y={}, count = {}".format(dataset.c2y, dataset.cnt))
 	dataset.genIndices()
@@ -373,19 +379,26 @@ if __name__ == '__main__':
 				if FOCUS_MODE == 'weight+':
 					thumb = focus(thumb, rtn_weight = True, weight_mul = True)
 
-				colors = color_quantization(thumb)
-
+#				colors = color_quantization(thumb)
+				hist, dark, light = hlVector(thumb)
+				colors = np.concatenate([[dark, light], hist.flatten()])
 				y_test = clf.predict(colors.reshape(-1))[0]
 				char = dataset.y2c[y_test]
-				print("[Classifier] {}: May {} in {}.".format(clfName, char, fn))
 
-				preview = thumbnail(img, SIZE_PREVIEW)
-				preview = focus(preview, rtn_img = True, rtn_weight = True)
-				draw_palette(preview, colors)
-#				better_imshow(clfName+':'+char, preview)
-#				better_imshow(clfName+':'+char, preview, reuse = False)
-#				imageDisplayed()
-				cv2.imwrite('result'+os.sep+fn.split(os.sep)[-1][:15]+'-'+
-					clfName+'.'+str(K)+'.'+FOCUS_MODE+'='+char+'.jpg', preview)
+				show_hlFeature(thumb, hist, dark, light,
+					clfName+'.'+FOCUS_MODE+'='+char, fig, 0)
+
+				print("[Classifier] {}: May {} in {}.".format(clfName, char, fn))
+				fig.savefig('result'+os.sep+fn.split(os.sep)[-1][:15]+'-'+
+					clfName+'.'+FOCUS_MODE+'='+char+'.jpg')
+#
+#				preview = thumbnail(img, SIZE_PREVIEW)
+#				preview = focus(preview, rtn_img = True, rtn_weight = True)
+#				draw_palette(preview, colors)
+##				better_imshow(clfName+':'+char, preview)
+##				better_imshow(clfName+':'+char, preview, reuse = False)
+##				imageDisplayed()
+#				cv2.imwrite('result'+os.sep+fn.split(os.sep)[-1][:15]+'-'+
+#					clfName+'.'+str(K)+'.'+FOCUS_MODE+'='+char+'.jpg', preview)
 
 logFile.close()

@@ -63,17 +63,15 @@ import pylab as pl
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.gridspec as gridspec
 
-import matplotlib.pyplot as plt
-
 palette = make_palette(display = False)
 palette = cv2.cvtColor(palette, cv2.COLOR_HLS2RGB)/256
 
-def show_hlFeature(img, hist, dark, light, fig = None, block = False):
+def show_hlFeature(img, hist, dark, light, title = None, fig = None, wait = 0.01):
 	img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 	if not fig:
-		fig = plt.figure()
+		fig = pl.figure()
 	gs = gridspec.GridSpec(4, 4)
-	pl.subplot(gs[:4, :3])
+	pl.subplot(gs[:4, :3], title = title)
 	pl.imshow(img_rgb)
 	pl.subplot(gs[:2, 3])
 	pl.bar([0, 1], [dark, light], color=[[0.1,0.1,0.1], [0.6,0.7,0.8]])
@@ -83,16 +81,17 @@ def show_hlFeature(img, hist, dark, light, fig = None, block = False):
 	for z in zs:
 		ax.bar(xs, hist[:,z], zs = z, zdir='y', alpha=0.7,
 			color = palette[z])
-	pl.show(block = block)
-	pl.draw()
-	pl.pause(0.01)
+	if wait != 0:
+		pl.show(block = wait<0)
+		pl.draw()
+		pl.pause(wait)
 
 if __name__ == '__main__':
 	import sys
-	fig = plt.figure()
+	fig = pl.figure()
 	img = cv2.imread(sys.argv[1])
 	hist, dark, light = hlVector(img)
-	show_hlFeature(img, hist, dark, light, fig)
+	show_hlFeature(img, hist, dark, light, sys.argv[1], fig)
 	img = cv2.imread(sys.argv[2])
 	hist, dark, light = hlVector(img)
-	show_hlFeature(img, hist, dark, light, fig)
+	show_hlFeature(img, hist, dark, light, sys.argv[2], fig)
