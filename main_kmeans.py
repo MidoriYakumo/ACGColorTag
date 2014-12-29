@@ -23,6 +23,8 @@ from sklearn.semi_supervised import LabelPropagation, LabelSpreading
 
 from ImageFeature import *
 
+from itertools import permutations
+
 
 __version__ = '0.0.1'
 
@@ -47,8 +49,8 @@ FOCUS_MODE = 'raw'
 #FOCUS_MODE = 'weight-'
 #FOCUS_MODE = 'weight+'
 
-#CACHE_FN = 'cache-vol.hdf5'
-CACHE_FN = 'cache-hl.hdf5'
+CACHE_FN = 'cache-kmeans.hdf5'
+#CACHE_FN = 'cache-hl.hdf5'
 HDF_REL_PATH = "/%(K)s/%(FOCUS_MODE)s/" % locals()
 
 import pylab as pl
@@ -57,6 +59,7 @@ fig = pl.figure()
 #current_time = time.time()
 logFile = open('log-%(K)s-%(FOCUS_MODE)s.txt' % locals(), 'a')
 #logFile = open('log-%(FOCUS_MODE)s.txt' % locals(), 'a')
+
 
 def dprint(*args, **kwargs):
 	kwargd = dict(sep = ' ', end='\n')
@@ -115,10 +118,10 @@ def color_extractor(fn, mode):
 	if FOCUS_MODE == 'weight+':
 		thumb = focus(thumb, rtn_weight = True, weight_mul = True)
 
-#	colors = color_quantization(thumb, K = K)
+	colors = color_quantization(thumb, K = K)
 #	colors = bgrOnLum(thumb)
-	hist, dark, light = hlHist(thumb)
-	colors = np.concatenate([[dark, light], hist.flatten()])
+#	hist, dark, light = hlHist(thumb)
+#	colors = np.concatenate([[dark, light], hist.flatten()])
 #	show_hlHist(thumb, hist, dark, light, fn, fig, 1)
 
 	preview = None
@@ -212,7 +215,9 @@ def prepare_dataset(dsDir = 'dataset'):
 				colors = cache('/data'+HDF_REL_PATH+md5(dsDir+fn),
 					lambda :color_extractor(dsDir + fn, None).reshape(-1),
 					'w', fn = CACHE_FN)
-				dataset.append(colors, char_extractor(fn))
+				for idx in  permutations(range(K)):
+#					print(colors.reshape(-1,3)[idx,:].reshape(-1))
+					dataset.append(colors.reshape(-1,3)[idx,:].reshape(-1), char_extractor(fn))
 #		except Exception as e:
 #			print(fn, e)
 
@@ -251,7 +256,8 @@ if __name__ == '__main__':
 		classifiers = [clfBest]
 	else:
 		classifiers = [
-			SVC(kernel = 'poly', degree = 4, gamma = 1.8, C = 0.1), # fair
+#			SVC(kernel = 'poly', degree = 4, gamma = 1.8, C = 0.1), # fair
+#			SVC(kernel = 'linear', gamma = 1.8, C = 0.1), # fair
 			KNeighborsClassifier(n_neighbors = 25, weights = 'distance'), # fair+
 #			NuSVC(kernel = 'linear', nu = p, degree = 5), #suck
 			MultinomialNB(), # fair
@@ -307,11 +313,11 @@ if __name__ == '__main__':
 				if FOCUS_MODE == 'weight+':
 					thumb = focus(thumb, rtn_weight = True, weight_mul = True)
 
-#				colors = cache('/data'+HDF_REL_PATH+md5(fn),
-#					lambda : bgrOnLum(thumb).reshape(-1),
-#					'w', fn = CACHE_FN).reshape(-1,3)
-				hist, dark, light = hlHist(thumb)
-				colors = np.concatenate([[dark, light], hist.flatten()])
+				colors = cache('/data'+HDF_REL_PATH+md5(fn),
+					lambda:color_quantization(thumb, K=K).reshape(-1),
+					'w', fn = CACHE_FN).reshape(-1,3)
+#				hist, dark, light = hlHist(thumb)
+#				colors = np.concatenate([[dark, light], hist.flatten()])
 
 				y_test = clf.predict(colors.reshape(-1))[0]
 				char = dataset.y2c[y_test]
@@ -322,18 +328,18 @@ if __name__ == '__main__':
 				if 'weight' in FOCUS_MODE:
 					preview = focus(preview, rtn_img = True, rtn_weight = True)
 
-				show_hlHist(preview, hist, dark, light,
-					clfName+'.'+FOCUS_MODE+'='+char, fig)
+#				show_hlHist(preview, hist, dark, light,
+#					clfName+'.'+FOCUS_MODE+'='+char, fig)
 
 				print("[Classifier] {}: May {} in {}.".format(clfName, char, fn))
 #				fig.savefig('result'+os.sep+fn.split(os.sep)[-1][:15]+'-'+
 #					clfName+'.'+FOCUS_MODE+'='+char+'.jpg')
 
-#				draw_palette(preview, colors)
-#				better_imshow(clfName+':'+char, preview)#, wait = 2)
+				draw_palette(preview, colors)
+				better_imshow(clfName+':'+char, preview)#, wait = 2)
 
 #				imageDisplayed()
-#				cv2.imwrite('result'+os.sep+fn.split(os.sep)[-1][:15]+'-'+
-#					clfName+'.'+str(K)+'.'+FOCUS_MODE+'='+char+'.jpg', preview)
+				cv2.imwrite('result'+os.sep+fn.split(os.sep)[-1][:15]+'-'+
+					clfName+'.'+str(K)+'.'+FOCUS_MODE+'='+char+'.jpg', preview)
 
 logFile.close()

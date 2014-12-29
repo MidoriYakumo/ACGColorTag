@@ -73,7 +73,7 @@ def color_sortByHue(idxs, c_hls, max_cut = True):
 			idxs = idxs[dHue.argmax()+1:] +idxs[:dHue.argmax()+1]
 	return idxs
 
-def color_sortByLuminance(idxs, c_hls):
+def color_sortByLum(idxs, c_hls):
 	return sorted(idxs, key=lambda n:c_hls[n,1])
 
 def color_quantization(img, **kwargs):
@@ -103,13 +103,13 @@ def color_quantization(img, **kwargs):
 	if sort == 'H':
 		c_rank = color_sortByHue(c_rank, c_hls, max_cut = True)
 	if sort == 'L':
-		c_rank = color_sortByLuminance(c_rank, c_hls)
-		i = j = 0
-		while j<K:
-			while (j<K) and (c_hls[c_rank[j], 1] - c_hls[c_rank[i], 1] < TOL_L): j += 1
-			if j-1>i:
-				c_rank[i:j] = color_sortByHue(c_rank[i:j], c_hls, max_cut = True)
-			i = j
+		c_rank = color_sortByLum(c_rank, c_hls)
+#		i = j = 0
+#		while j<K:
+#			while (j<K) and (c_hls[c_rank[j], 1] - c_hls[c_rank[i], 1] < TOL_L): j += 1
+#			if j-1>i:
+#				c_rank[i:j] = color_sortByHue(c_rank[i:j], c_hls, max_cut = True)
+#			i = j
 
 	ccentroids = centroids[c_rank]
 
@@ -150,7 +150,7 @@ def make_palette(sat = 255, display = True):
 
 	return PALETTE
 
-def hlFeature(img):
+def hlHist(img):
 	if len(img.shape) == 2:
 		if img.shape[0] & 1:
 			img = np.concatenate([img, np.array([[0,0,0]], dtype = np.uint8)])
@@ -168,6 +168,28 @@ def hlFeature(img):
 	light = np.sum(l>PALETTE_MAX_L) / size
 	return hist, dark, light
 
+def bgrOnLum(img):
+	if len(img.shape) == 2:
+		if img.shape[0] & 1:
+			img = np.concatenate([img, np.array([[0,0,0]], dtype = np.uint8)])
+		img = img.reshape(2,-1,3)
+	hls = cv2.cvtColor(img, cv2.COLOR_BGR2HLS)
+
+	vol = np.zeros((PALETTE_DIV_L - 2, 3), dtype = np.uint32)
+
+	i = 0
+	l = hls[:,:,1]
+	l_low = PALETTE_MIN_L
+	while l_low <  PALETTE_MAX_L:
+		r = l_low<l
+		r = r.__and__(l<l_low+PALETTE_STE_L)
+		inrange = img[np.where(r)]
+		vol[i,:] = np.average(inrange, axis = (0))
+		i += 1
+		l_low += PALETTE_STE_L
+
+	return vol
+
 
 import pylab as pl
 from mpl_toolkits.mplot3d import Axes3D
@@ -176,7 +198,7 @@ import matplotlib.gridspec as gridspec
 palette = make_palette(display = False)
 palette = cv2.cvtColor(palette, cv2.COLOR_HLS2RGB)/256
 
-def show_hlFeature(img, hist, dark, light, title = None, fig = None, wait = 0.01):
+def show_hlHist(img, hist, dark, light, title = None, fig = None, wait = 0.01):
 	img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 	if not fig:
 		fig = pl.figure()
@@ -186,6 +208,7 @@ def show_hlFeature(img, hist, dark, light, title = None, fig = None, wait = 0.01
 	pl.subplot(gs[:2, 3])
 	pl.bar([0, 1], [dark, light], color=[[0.1,0.1,0.1], [0.6,0.7,0.8]])
 	pl.xticks([0, 1],['Dark', 'Light'])
+#	pl.imshow(hist.T, cmap = pl.cm.gray_r) # show gray map
 	ax = fig.add_subplot(gs[2:, 2:], projection='3d')
 	xs, zs = range(hist.shape[0]), range(hist.shape[1])
 	for z in zs:
@@ -200,9 +223,9 @@ if __name__ == '__main__':
 	import sys
 	fig = pl.figure()
 	img = cv2.imread(sys.argv[1])
-	hist, dark, light = hlVector(img)
-	show_hlFeature(img, hist, dark, light, sys.argv[1], fig)
-	img = cv2.imread(sys.argv[2])
-	hist, dark, light = hlVector(img)
-	show_hlFeature(img, hist, dark, light, sys.argv[2], fig)
-	make_palette()
+#	hist, dark, light = hlHist(img)
+#	show_hlHist(img, hist, dark, light, sys.argv[1], fig)
+	vol = bgrOnLum(img)
+#	hist, dark, light = bgrOnLum(img)
+#	show_hlHist(img, hist, dark, light, sys.argv[2], fig)
+#	make_palette()
