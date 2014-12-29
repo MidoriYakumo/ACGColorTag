@@ -115,8 +115,6 @@ def color_extractor(fn, mode):
 	if FOCUS_MODE == 'weight+':
 		thumb = focus(thumb, rtn_weight = True, weight_mul = True)
 
-#	colors = color_quantization(thumb, K = K)
-#	colors = bgrOnLum(thumb)
 	hist, dark, light = hlHist(thumb)
 	colors = np.concatenate([[dark, light], hist.flatten()])
 #	show_hlHist(thumb, hist, dark, light, fn, fig, 1)
@@ -326,14 +324,11 @@ if __name__ == '__main__':
 					clfName+'.'+FOCUS_MODE+'='+char, fig)
 
 				print("[Classifier] {}: May {} in {}.".format(clfName, char, fn))
-#				fig.savefig('result'+os.sep+fn.split(os.sep)[-1][:15]+'-'+
-#					clfName+'.'+FOCUS_MODE+'='+char+'.jpg')
-
 #				draw_palette(preview, colors)
 #				better_imshow(clfName+':'+char, preview)#, wait = 2)
 
-#				imageDisplayed()
-#				cv2.imwrite('result'+os.sep+fn.split(os.sep)[-1][:15]+'-'+
-#					clfName+'.'+str(K)+'.'+FOCUS_MODE+'='+char+'.jpg', preview)
+
+				fig.savefig('result'+os.sep+fn.split(os.sep)[-1][:15]+'-'+
+					clfName+'.'+FOCUS_MODE+'='+char+'.jpg')
 
 logFile.close()

@@ -42,8 +42,8 @@ def focus(img, **kwargs):
 		if weight_func:
 			mask = weight_func(sobel)
 		else:
-			mask = sobel/sobel.max()
-#			mask = (sobel/sobel.max())**2
+#			mask = sobel/sobel.max()
+			mask = (sobel/sobel.max())**2
 	else:
 		sobel_1d = sobel.flatten()
 		mask = sobel>np.sort(sobel_1d)[TOP_RATIO*len(sobel_1d)]
@@ -55,7 +55,7 @@ def focus(img, **kwargs):
 		return (img * mask[:,:,np.newaxis]).astype(np.uint8)
 	else:
 		if kwargd.get('weight_mul'):
-			mask *= img.shape[0] * img.shape[1] / np.sum(mask)
+			mask *= img.shape[0] * img.shape[1] / np.sum(mask)   * 25
 			mask += 0.5
 			return np.repeat(img.reshape(-1,3), mask.flatten().astype(np.uint8), axis=0)
 		if kwargd.get('rtn_weight'):
@@ -162,11 +162,18 @@ def hlHist(img):
 		PALETTE_MIN_L, PALETTE_MAX_L + 1])
 #	hist = hist.astype(np.uint32)
 	size = np.prod(img.shape[:2])
-	hist = hist.astype(np.uint32) / size
 	l = hls[:,:,1]
-	dark = np.sum(l<PALETTE_MIN_L) / size
-	light = np.sum(l>PALETTE_MAX_L) / size
-	return hist, dark, light
+
+	hist = np.log(hist.astype(np.uint32)+1+1e-6)
+	dark = np.log(np.sum(l<PALETTE_MIN_L)+1+1e-6)
+	light =np.log(np.sum(l>PALETTE_MAX_L)+1+1e-6)
+
+#	hist = hist.astype(np.uint32) / size
+#	dark = np.sum(l<PALETTE_MIN_L) / size
+#	light = np.sum(l>PALETTE_MAX_L) / size
+
+
+	return cv2.blur(hist, (2, 2)), dark, light
 
 def bgrOnLum(img):
 	if len(img.shape) == 2:
@@ -223,9 +230,7 @@ if __name__ == '__main__':
 	import sys
 	fig = pl.figure()
 	img = cv2.imread(sys.argv[1])
-#	hist, dark, light = hlHist(img)
-#	show_hlHist(img, hist, dark, light, sys.argv[1], fig)
-	vol = bgrOnLum(img)
-#	hist, dark, light = bgrOnLum(img)
-#	show_hlHist(img, hist, dark, light, sys.argv[2], fig)
+	hist, dark, light = hlHist(img)
+	show_hlHist(img, hist, dark, light, sys.argv[1], fig)
+
 #	make_palette()
