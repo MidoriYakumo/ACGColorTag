@@ -45,6 +45,10 @@ def make_palette(sat = 255, display = True):
 	return PALETTE
 
 def hlVector(img):
+	if len(img.shape) == 2:
+		if img.shape[0] & 1:
+			img = np.concatenate([img, np.array([[0,0,0]], dtype = np.uint8)])
+		img = img.reshape(2,-1,3)
 	hls = cv2.cvtColor(img, cv2.COLOR_BGR2HLS)
 	hist = cv2.calcHist([hls], [0,1], None,
 		[PALETTE_DIV_H, PALETTE_DIV_L - 2],
@@ -95,3 +99,4 @@ if __name__ == '__main__':
 	img = cv2.imread(sys.argv[2])
 	hist, dark, light = hlVector(img)
 	show_hlFeature(img, hist, dark, light, sys.argv[2], fig)
+	make_palette()

@@ -21,7 +21,7 @@ from sklearn.lda import LDA
 from sklearn.qda import QDA
 from sklearn.semi_supervised import LabelPropagation, LabelSpreading
 
-from hlshist import *
+from ImageFeature import *
 
 
 __version__ = '0.0.1'
@@ -59,7 +59,8 @@ import pylab as pl
 fig = pl.figure()
 
 #current_time = time.time()
-logFile = open('log-%(K)s-%(FOCUS_MODE)s.txt' % locals(), 'a')
+#logFile = open('log-%(K)s-%(FOCUS_MODE)s.txt' % locals(), 'a')
+logFile = open('log-%(FOCUS_MODE)s.txt' % locals(), 'a')
 
 def dprint(*args, **kwargs):
 	kwargd = dict(sep = ' ', end='\n')
@@ -190,7 +191,7 @@ def color_extractor(fn, mode):
 		thumb = focus(thumb, rtn_weight = True, weight_mul = True)
 
 #	colors = color_quantization(thumb)
-	hist, dark, light = hlVector(thumb)
+	hist, dark, light = hlFeature(thumb)
 	colors = np.concatenate([[dark, light], hist.flatten()])
 #	show_hlFeature(thumb, hist, dark, light, fn, fig, 1)
 
@@ -380,20 +381,22 @@ if __name__ == '__main__':
 					thumb = focus(thumb, rtn_weight = True, weight_mul = True)
 
 #				colors = color_quantization(thumb)
-				hist, dark, light = hlVector(thumb)
+				hist, dark, light = hlFeature(thumb)
 				colors = np.concatenate([[dark, light], hist.flatten()])
 				y_test = clf.predict(colors.reshape(-1))[0]
 				char = dataset.y2c[y_test]
 
-				show_hlFeature(thumb, hist, dark, light,
+#
+				preview = thumbnail(img, SIZE_PREVIEW)
+				preview = focus(preview, rtn_img = True, rtn_weight = True)
+
+				show_hlFeature(preview, hist, dark, light,
 					clfName+'.'+FOCUS_MODE+'='+char, fig, 0)
 
 				print("[Classifier] {}: May {} in {}.".format(clfName, char, fn))
 				fig.savefig('result'+os.sep+fn.split(os.sep)[-1][:15]+'-'+
 					clfName+'.'+FOCUS_MODE+'='+char+'.jpg')
-#
-#				preview = thumbnail(img, SIZE_PREVIEW)
-#				preview = focus(preview, rtn_img = True, rtn_weight = True)
+
 #				draw_palette(preview, colors)
 ##				better_imshow(clfName+':'+char, preview)
 ##				better_imshow(clfName+':'+char, preview, reuse = False)
